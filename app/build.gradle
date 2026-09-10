@@ -5,15 +5,13 @@ plugins {
 android {
     namespace 'com.gymtrackerpro.app'
     compileSdk 35
-
     defaultConfig {
         applicationId 'com.gymtrackerpro.app'
         minSdk 26
         targetSdk 35
-        versionCode 9
-        versionName '1.9'
+        versionCode 21
+        versionName '2.1'
     }
-
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
@@ -21,4 +19,6 @@ android {
 }
 
 dependencies {
+    implementation 'com.google.mlkit:text-recognition:16.0.1'
+    implementation 'com.google.android.gms:play-services-tasks:18.2.0'
 }
