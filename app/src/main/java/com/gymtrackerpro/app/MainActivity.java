@@ -104,8 +104,7 @@ public class MainActivity extends Activity {
         addMetric(metrics,"Esercizi",String.valueOf(es.size()),"♙"); addMetric(metrics,"Serie",String.valueOf(store.totalSets(es)),"▱"); addMetric(metrics,"Completate",String.valueOf(store.completedSets(es)),"✓"); content.addView(metrics,new LinearLayout.LayoutParams(-1,96));
         int total=store.totalSets(es),done=store.completedSets(es); ProgressBar pb=new ProgressBar(this,null,android.R.attr.progressBarStyleHorizontal);pb.setMax(Math.max(1,total));pb.setProgress(done);pb.setProgressTintList(android.content.res.ColorStateList.valueOf(accent));content.addView(pb,new LinearLayout.LayoutParams(-1,7));
         LinearLayout actions=new LinearLayout(this); actions.setPadding(0,10,0,4); Button reset=btn("Reset"); reset.setTextColor(accent); reset.setOnClickListener(v->{store.resetDay();showDashboard();}); actions.addView(reset,new LinearLayout.LayoutParams(0,50,1)); content.addView(actions);
-        if(es.isEmpty()){TextView empty=tv("Giorno libero
-Aggiungi gli esercizi che vuoi per questo giorno.",16,false);empty.setGravity(Gravity.CENTER);empty.setPadding(10,50,10,50);content.addView(empty);} else for(Exercise e:es)addExerciseCard(e);
+        if(es.isEmpty()){TextView empty=tv("Giorno libero\nAggiungi gli esercizi che vuoi per questo giorno.",16,false);empty.setGravity(Gravity.CENTER);empty.setPadding(10,50,10,50);content.addView(empty);} else for(Exercise e:es)addExerciseCard(e);
     }
 
     void addMetric(LinearLayout parent,String title,String value,String icon){
