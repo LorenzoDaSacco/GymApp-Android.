@@ -1,0 +1,5 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:padding="12dp" android:background="#222222">
+<TextView android:id="@+id/widgetTitle" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Scheda di oggi" android:textColor="#D889FF" android:textStyle="bold" android:textSize="15sp"/>
+<TextView android:id="@+id/widgetDay" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="#FFFFFF" android:textStyle="bold" android:textSize="18sp" android:layout_marginTop="4dp"/>
+<TextView android:id="@+id/widgetExercises" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="#CCCCCC" android:textSize="12sp" android:maxLines="2" android:ellipsize="end"/>
+</LinearLayout>
