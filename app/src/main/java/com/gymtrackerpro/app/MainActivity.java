@@ -38,6 +38,9 @@ public class MainActivity extends Activity {
 
     @Override public void onCreate(Bundle b){
         super.onCreate(b);
+        getWindow().setStatusBarColor(Color.BLACK);
+        getWindow().setNavigationBarColor(Color.BLACK);
+        getWindow().getDecorView().setSystemUiVisibility(0);
         store=new WorkoutStore(this);
         dark=store.dark; accent=store.accent;
         build();
@@ -48,37 +51,40 @@ public class MainActivity extends Activity {
     void build(){
         dark=store.dark; accent=store.accent;
         root=new LinearLayout(this); root.setOrientation(LinearLayout.VERTICAL); root.setBackgroundColor(bg());
-        content=new LinearLayout(this); content.setOrientation(LinearLayout.VERTICAL); content.setPadding(16,12,16,8);
+        content=new LinearLayout(this); content.setOrientation(LinearLayout.VERTICAL); content.setPadding(20,12,20,18);
         ScrollView sc=new ScrollView(this); sc.setFillViewport(true); sc.addView(content);
         root.addView(sc,new LinearLayout.LayoutParams(-1,0,1));
         nav(); setContentView(root);
         showDashboard();
     }
 
-    int bg(){return dark?Color.rgb(10,10,12):Color.rgb(247,247,249);}
-    int card(){return dark?Color.rgb(24,24,27):Color.WHITE;}
+    int bg(){return dark?Color.BLACK:Color.rgb(247,247,249);}
+    int card(){return dark?Color.rgb(28,28,30):Color.WHITE;}
     int fg(){return dark?Color.WHITE:Color.rgb(25,25,28);}
-    int secondary(){return dark?Color.rgb(180,180,188):Color.rgb(95,95,102);}
+    int secondary(){return dark?Color.rgb(142,142,147):Color.rgb(95,95,102);}
     int accent(){return accent;}
     GradientDrawable box(int color,float radius){GradientDrawable g=new GradientDrawable();g.setColor(color);g.setCornerRadius(radius);return g;}
-    TextView tv(String s,float size,boolean bold){TextView t=new TextView(this);t.setText(s);t.setTextColor(fg());t.setTextSize(size);t.setTypeface(Typeface.DEFAULT,bold?Typeface.BOLD:Typeface.NORMAL);return t;}
-    Button btn(String s){Button b=new Button(this);b.setText(s);b.setTextColor(fg());b.setAllCaps(false);b.setTextSize(14);b.setBackground(box(dark?Color.rgb(34,34,38):Color.rgb(238,238,242),18));return b;}
-    EditText edit(String hint){EditText e=new EditText(this);e.setHint(hint);e.setHintTextColor(secondary());e.setTextColor(fg());e.setSingleLine(true);e.setPadding(12,0,12,0);e.setBackground(box(dark?Color.rgb(40,40,45):Color.rgb(238,238,242),14));return e;}
+    GradientDrawable iosCard(){GradientDrawable g=box(card(),28);if(dark)g.setStroke(1,Color.rgb(48,48,50));return g;}
+    TextView tv(String s,float size,boolean bold){TextView t=new TextView(this);t.setText(s);t.setTextColor(fg());t.setTextSize(size);t.setTypeface(Typeface.create("sans-serif",bold?Typeface.BOLD:Typeface.NORMAL));t.setIncludeFontPadding(false);return t;}
+    Button btn(String s){Button b=new Button(this);b.setText(s);b.setTextColor(fg());b.setAllCaps(false);b.setTextSize(14);b.setTypeface(Typeface.create("sans-serif",Typeface.BOLD));b.setGravity(Gravity.CENTER);b.setMinHeight(0);b.setMinimumHeight(0);b.setMinWidth(0);b.setMinimumWidth(0);b.setPadding(12,0,12,0);b.setStateListAnimator(null);b.setBackground(box(dark?Color.rgb(44,44,46):Color.rgb(238,238,242),22));return b;}
+    EditText edit(String hint){EditText e=new EditText(this);e.setHint(hint);e.setHintTextColor(secondary());e.setTextColor(fg());e.setSingleLine(true);e.setTextSize(17);e.setTypeface(Typeface.create("sans-serif",Typeface.NORMAL));e.setIncludeFontPadding(false);e.setPadding(14,0,14,0);e.setBackground(box(dark?Color.rgb(20,20,22):Color.rgb(235,235,240),16));return e;}
     void addGap(int h){Space s=new Space(this);content.addView(s,new LinearLayout.LayoutParams(1,h));}
     void hideKeyboard(){View v=getCurrentFocus();if(v!=null){((InputMethodManager)getSystemService(INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(v.getWindowToken(),0);v.clearFocus();}}
 
     void nav(){
-        bottom=new LinearLayout(this); bottom.setOrientation(LinearLayout.HORIZONTAL); bottom.setGravity(Gravity.CENTER); bottom.setPadding(8,7,8,7); bottom.setBackground(box(dark?Color.rgb(22,22,24):Color.WHITE,42));
+        bottom=new LinearLayout(this); bottom.setOrientation(LinearLayout.HORIZONTAL); bottom.setGravity(Gravity.CENTER); bottom.setPadding(6,6,6,6); bottom.setElevation(10); bottom.setBackground(box(dark?Color.rgb(18,18,20):Color.WHITE,40));
         String[] icons={"▤","⌁","+","⚙"}; String[] labels={"Scheda","Progressi","Aggiungi","Impostazioni"};
         for(int i=0;i<4;i++){
             final int k=i; LinearLayout item=new LinearLayout(this); item.setOrientation(LinearLayout.VERTICAL); item.setGravity(Gravity.CENTER); item.setPadding(4,3,4,3);
             TextView ic=tv(icons[i],23,true); ic.setGravity(Gravity.CENTER); TextView tx=tv(labels[i],12,true); tx.setGravity(Gravity.CENTER);
-            item.addView(ic,new LinearLayout.LayoutParams(-1,29)); item.addView(tx,new LinearLayout.LayoutParams(-1,24));
+            item.addView(ic,new LinearLayout.LayoutParams(-1,31)); item.addView(tx,new LinearLayout.LayoutParams(-1,25));
             if(i==0){item.setBackground(box(accentSoft(),34));ic.setTextColor(accent);tx.setTextColor(accent);}
             item.setOnClickListener(v->{hideKeyboard(); if(k==0)showDashboard(); else if(k==1)showProgress(); else if(k==2)showAdd(); else showSettings();});
-            bottom.addView(item,new LinearLayout.LayoutParams(0,60,1));
+            bottom.addView(item,new LinearLayout.LayoutParams(0,62,1));
         }
-        root.addView(bottom,new LinearLayout.LayoutParams(-1,74));
+        LinearLayout.LayoutParams navLp=new LinearLayout.LayoutParams(-1,78);
+        navLp.setMargins(12,6,12,10);
+        root.addView(bottom,navLp);
     }
     int accentSoft(){return Color.argb(45,Color.red(accent),Color.green(accent),Color.blue(accent));}
     void clear(String title){
@@ -89,11 +95,11 @@ public class MainActivity extends Activity {
     void showDashboard(){
         clear("");
         LinearLayout top=new LinearLayout(this); top.setGravity(Gravity.CENTER_VERTICAL); top.setPadding(4,2,4,0);
-        TextView title=tv("GYM TRACKER PRO",26,true); title.setTypeface(Typeface.DEFAULT,Typeface.BOLD); top.addView(title,new LinearLayout.LayoutParams(0,48,1));
+        TextView title=tv("GYM TRACKER PRO",27,true); title.setTypeface(Typeface.DEFAULT,Typeface.BOLD); top.addView(title,new LinearLayout.LayoutParams(0,48,1));
         Button imp=btn("●"); imp.setTextSize(12); imp.setTextColor(accent); imp.setBackground(box(accentSoft(),32)); imp.setOnClickListener(v->showImport()); top.addView(imp,new LinearLayout.LayoutParams(52,48)); content.addView(top);
-        TextView sub=tv("Allenamento del giorno",14,true); sub.setTextColor(secondary()); sub.setPadding(4,0,4,4); content.addView(sub);
+        TextView sub=tv("Allenamento del giorno",15,true); sub.setTextColor(secondary()); sub.setPadding(4,0,4,4); content.addView(sub);
 
-        LinearLayout dayBox=new LinearLayout(this); dayBox.setGravity(Gravity.CENTER_VERTICAL); dayBox.setPadding(18,0,18,0); dayBox.setBackground(box(dark?Color.rgb(36,36,39):Color.rgb(238,238,242),40));
+        LinearLayout dayBox=new LinearLayout(this); dayBox.setGravity(Gravity.CENTER_VERTICAL); dayBox.setPadding(20,0,20,0); dayBox.setBackground(box(dark?Color.rgb(36,36,39):Color.rgb(238,238,242),40));
         TextView dayLabel=tv("Giorno",16,false); dayLabel.setTextColor(secondary()); dayBox.addView(dayLabel,new LinearLayout.LayoutParams(0,54,1));
         Spinner day=new Spinner(this); ArrayAdapter<String> ad=new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,DAYS){@Override public View getView(int p,View c,android.view.ViewGroup parent){TextView v=(TextView)super.getView(p,c,parent);v.setTextColor(accent);v.setTextSize(16);v.setTypeface(Typeface.DEFAULT,Typeface.BOLD);v.setGravity(Gravity.RIGHT|Gravity.CENTER_VERTICAL);return v;}};
         day.setAdapter(ad); int pos=Arrays.asList(DAYS).indexOf(store.selectedDay); day.setSelection(Math.max(0,pos));
@@ -101,37 +107,37 @@ public class MainActivity extends Activity {
         dayBox.addView(day,new LinearLayout.LayoutParams(145,54)); content.addView(dayBox);
 
         List<Exercise> es=store.forDay(store.selectedDay); LinearLayout metrics=new LinearLayout(this); metrics.setPadding(0,12,0,10);
-        addMetric(metrics,"Esercizi",String.valueOf(es.size()),"♙"); addMetric(metrics,"Serie",String.valueOf(store.totalSets(es)),"▱"); addMetric(metrics,"Completate",String.valueOf(store.completedSets(es)),"✓"); content.addView(metrics,new LinearLayout.LayoutParams(-1,96));
+        addMetric(metrics,"Esercizi",String.valueOf(es.size()),"♙"); addMetric(metrics,"Serie",String.valueOf(store.totalSets(es)),"▱"); addMetric(metrics,"Completate",String.valueOf(store.completedSets(es)),"✓"); content.addView(metrics,new LinearLayout.LayoutParams(-1,102));
         int total=store.totalSets(es),done=store.completedSets(es); ProgressBar pb=new ProgressBar(this,null,android.R.attr.progressBarStyleHorizontal);pb.setMax(Math.max(1,total));pb.setProgress(done);pb.setProgressTintList(android.content.res.ColorStateList.valueOf(accent));content.addView(pb,new LinearLayout.LayoutParams(-1,7));
-        LinearLayout actions=new LinearLayout(this); actions.setPadding(0,10,0,4); Button reset=btn("Reset"); reset.setTextColor(accent); reset.setOnClickListener(v->{store.resetDay();showDashboard();}); actions.addView(reset,new LinearLayout.LayoutParams(0,50,1)); content.addView(actions);
+        LinearLayout actions=new LinearLayout(this); actions.setPadding(0,10,0,4); Button reset=btn("Reset giornata"); reset.setTextColor(accent); reset.setBackground(box(accentSoft(),24)); reset.setOnClickListener(v->{store.resetDay();showDashboard();}); actions.addView(reset,new LinearLayout.LayoutParams(0,50,1)); content.addView(actions);
         if(es.isEmpty()){TextView empty=tv("Giorno libero\nAggiungi gli esercizi che vuoi per questo giorno.",16,false);empty.setGravity(Gravity.CENTER);empty.setPadding(10,50,10,50);content.addView(empty);} else for(Exercise e:es)addExerciseCard(e);
     }
 
     void addMetric(LinearLayout parent,String title,String value,String icon){
-        LinearLayout m=new LinearLayout(this);m.setOrientation(LinearLayout.VERTICAL);m.setPadding(12,8,8,8);m.setBackground(box(card(),18));
-        TextView i=tv(icon,17,true);i.setTextColor(accent);m.addView(i);m.addView(tv(value,21,true));TextView t=tv(title,12,false);t.setTextColor(secondary());m.addView(t);
+        LinearLayout m=new LinearLayout(this);m.setOrientation(LinearLayout.VERTICAL);m.setPadding(14,10,10,10);m.setBackground(box(card(),22));
+        TextView i=tv(icon,17,true);i.setTextColor(accent);m.addView(i);m.addView(tv(value,25,true));TextView t=tv(title,13,false);t.setTextColor(secondary());m.addView(t);
         LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(0,-1,1);lp.setMargins(3,3,3,3);parent.addView(m,lp);
     }
 
     void addExerciseCard(Exercise e){
-        LinearLayout c=new LinearLayout(this); c.setOrientation(LinearLayout.VERTICAL); c.setPadding(16,16,16,16); c.setBackground(box(card(),26));
+        LinearLayout c=new LinearLayout(this); c.setOrientation(LinearLayout.VERTICAL); c.setPadding(18,20,18,20); c.setBackground(iosCard());
         LinearLayout.LayoutParams cp=new LinearLayout.LayoutParams(-1,-2); cp.setMargins(0,9,0,9); content.addView(c,cp);
         LinearLayout head=new LinearLayout(this); head.setGravity(Gravity.TOP|Gravity.CENTER_VERTICAL);
         LinearLayout titles=new LinearLayout(this); titles.setOrientation(LinearLayout.VERTICAL); titles.setPadding(0,0,6,0);
-        TextView n=tv(e.name,19,true); titles.addView(n); TextView g=tv(e.group,12,true);g.setTextColor(accent);titles.addView(g);TextView f=tv(e.focus,12,false);f.setTextColor(secondary());titles.addView(f);
+        TextView n=tv(e.name,20,true); titles.addView(n); TextView g=tv(e.group,13,true);g.setTextColor(accent);titles.addView(g);TextView f=tv(e.focus,13,false);f.setTextColor(secondary());titles.addView(f);
         head.addView(titles,new LinearLayout.LayoutParams(0,-2,1));
-        Button mod=btn("Modifica"); mod.setTextColor(accent); mod.setOnClickListener(v->showExercise(e,true)); head.addView(mod,new LinearLayout.LayoutParams(100,46)); c.addView(head);
+        Button mod=btn("Modifica"); mod.setTextColor(accent); mod.setBackground(box(accentSoft(),22)); mod.setOnClickListener(v->showExercise(e,true)); head.addView(mod,new LinearLayout.LayoutParams(100,46)); c.addView(head);
         LinearLayout info=new LinearLayout(this);info.setGravity(Gravity.CENTER_VERTICAL);TextView rr=tv("Recupero",13,true);info.addView(rr);EditText rec=edit("2:00");rec.setText(e.recovery);rec.setEnabled(false);rec.setTextSize(15);rec.setGravity(Gravity.CENTER);rec.setBackground(box(Color.BLACK,10));info.addView(rec,new LinearLayout.LayoutParams(86,46));Space sp=new Space(this);info.addView(sp,new LinearLayout.LayoutParams(0,1,1));TextView tg=tv(e.target.toUpperCase(Locale.ITALIAN),11,true);tg.setTextColor(accent);tg.setGravity(Gravity.CENTER);tg.setPadding(10,0,10,0);tg.setBackground(box(accentSoft(),30));info.addView(tg,new LinearLayout.LayoutParams(-2,40));c.addView(info);
         for(int i=0;i<e.sets.size();i++) addCompactSetRow(c,e,i);
-        LinearLayout actions=new LinearLayout(this); Button plus=btn("+ Serie"),minus=btn("− Serie");plus.setTextColor(accent);minus.setTextColor(accent);plus.setOnClickListener(v->{store.addSet(e);showDashboard();});minus.setOnClickListener(v->{store.removeSet(e);showDashboard();});actions.addView(plus,new LinearLayout.LayoutParams(0,48,1));actions.addView(minus,new LinearLayout.LayoutParams(0,48,1));TextView cnt=tv(e.sets.size()+" serie",12,false);cnt.setGravity(Gravity.CENTER);cnt.setTextColor(secondary());actions.addView(cnt,new LinearLayout.LayoutParams(70,48));c.addView(actions);
+        LinearLayout actions=new LinearLayout(this); Button plus=btn("+ Serie"),minus=btn("− Serie");plus.setTextColor(accent);minus.setTextColor(accent);plus.setOnClickListener(v->{store.addSet(e);showDashboard();});minus.setOnClickListener(v->{store.removeSet(e);showDashboard();});actions.addView(plus,new LinearLayout.LayoutParams(0,52,1));actions.addView(minus,new LinearLayout.LayoutParams(0,52,1));TextView cnt=tv(e.sets.size()+" serie",12,false);cnt.setGravity(Gravity.CENTER);cnt.setTextColor(secondary());actions.addView(cnt,new LinearLayout.LayoutParams(78,50));c.addView(actions);
         MuscleMapView map=new MuscleMapView(this,e.target);c.addView(map,new LinearLayout.LayoutParams(-1,185));
     }
     void addCompactSetRow(LinearLayout parent,Exercise e,int idx){
-        Set s=e.sets.get(idx); LinearLayout row=new LinearLayout(this);row.setGravity(Gravity.CENTER_VERTICAL);row.setPadding(0,3,0,3);
+        Set s=e.sets.get(idx); LinearLayout row=new LinearLayout(this);row.setGravity(Gravity.CENTER_VERTICAL);row.setPadding(0,6,0,6);
         TextView sn=tv("S"+(idx+1),13,true);row.addView(sn,new LinearLayout.LayoutParams(32,48));
-        EditText reps=edit(s.reps);reps.setText(s.reps);reps.setTextSize(15);reps.setGravity(Gravity.CENTER);reps.setEnabled(false);row.addView(reps,new LinearLayout.LayoutParams(72,46));
-        if(s.isBackOff){TextView w=tv(fmt(store.backOffWeight(e)),15,true);w.setGravity(Gravity.CENTER);w.setTextColor(accent);w.setBackground(box(accentSoft(),12));row.addView(w,new LinearLayout.LayoutParams(76,46));TextView bo=tv("kg  Back-off −20%",10,true);bo.setTextColor(accent);row.addView(bo,new LinearLayout.LayoutParams(0,46,1));}
-        else {EditText w=edit("kg");w.setText(fmt(s.weight));w.setTextSize(15);w.setGravity(Gravity.CENTER);w.setEnabled(false);row.addView(w,new LinearLayout.LayoutParams(76,46));TextView kg=tv("kg",12,true);kg.setTextColor(accent);kg.setGravity(Gravity.CENTER_VERTICAL);row.addView(kg,new LinearLayout.LayoutParams(32,46));}
+        EditText reps=edit(s.reps);reps.setText(s.reps);reps.setTextSize(15);reps.setGravity(Gravity.CENTER);reps.setEnabled(false);row.addView(reps,new LinearLayout.LayoutParams(78,48));
+        if(s.isBackOff){TextView w=tv(fmt(store.backOffWeight(e)),15,true);w.setGravity(Gravity.CENTER);w.setTextColor(accent);w.setBackground(box(accentSoft(),12));row.addView(w,new LinearLayout.LayoutParams(82,48));TextView bo=tv("kg  Back-off −20%",10,true);bo.setTextColor(accent);row.addView(bo,new LinearLayout.LayoutParams(0,46,1));}
+        else {EditText w=edit("kg");w.setText(fmt(s.weight));w.setTextSize(15);w.setGravity(Gravity.CENTER);w.setEnabled(false);row.addView(w,new LinearLayout.LayoutParams(82,48));TextView kg=tv("kg",12,true);kg.setTextColor(accent);kg.setGravity(Gravity.CENTER_VERTICAL);row.addView(kg,new LinearLayout.LayoutParams(32,46));}
         CheckBox done=new CheckBox(this);done.setButtonTintList(new android.content.res.ColorStateList(new int[][]{new int[]{android.R.attr.state_checked},new int[]{}},new int[]{accent,Color.LTGRAY}));done.setChecked(s.done);done.setOnCheckedChangeListener((b,c)->{if(b.isPressed()){s.done=c;store.save();if(c)startRecovery(e,s);else RecoveryNotifications.cancel(this,s.id);}});row.addView(done,new LinearLayout.LayoutParams(48,48));parent.addView(row);
     }
 
@@ -160,15 +166,15 @@ public class MainActivity extends Activity {
         Set s=e.sets.get(idx);
         LinearLayout row=new LinearLayout(this);row.setGravity(Gravity.CENTER_VERTICAL);row.setPadding(2,5,2,5);
         TextView sn=tv("S"+(idx+1),12,true);sn.setTextColor(accent);row.addView(sn,new LinearLayout.LayoutParams(32,52));
-        EditText reps=edit(s.reps);reps.setText(s.reps);reps.setEnabled(editing);reps.setInputType(1);reps.setOnFocusChangeListener((v,f)->{if(!f&&editing){s.reps=reps.getText().toString();store.save();}});row.addView(reps,new LinearLayout.LayoutParams(70,48));
+        EditText reps=edit(s.reps);reps.setText(s.reps);reps.setEnabled(editing);reps.setInputType(1);reps.setOnFocusChangeListener((v,f)->{if(!f&&editing){s.reps=reps.getText().toString();store.save();}});row.addView(reps,new LinearLayout.LayoutParams(78,50));
         TextView sep=tv("  ",10,false);row.addView(sep,new LinearLayout.LayoutParams(5,48));
         if(s.isBackOff){
             TextView w=tv(fmt(store.backOffWeight(e)),15,true);w.setGravity(Gravity.CENTER);w.setTextColor(accent);w.setBackground(box(dark?Color.rgb(44,30,50):Color.rgb(245,235,250),14));
-            row.addView(w,new LinearLayout.LayoutParams(76,48));TextView kg=tv(" kg  Back-off −20%",10,true);kg.setTextColor(accent);row.addView(kg,new LinearLayout.LayoutParams(0,48,1));
+            row.addView(w,new LinearLayout.LayoutParams(82,50));TextView kg=tv(" kg  Back-off −20%",10,true);kg.setTextColor(accent);row.addView(kg,new LinearLayout.LayoutParams(0,48,1));
         }else{
             EditText w=edit("kg");w.setText(fmt(s.weight));w.setEnabled(editing);w.setInputType(2|8192);w.setSelectAllOnFocus(true);
             w.setOnFocusChangeListener((v,f)->{if(!f&&editing){commitWeight(e,idx,w);}});w.setOnEditorActionListener((v,id,event)->{commitWeight(e,idx,w);hideKeyboard();return true;});
-            row.addView(w,new LinearLayout.LayoutParams(76,48));TextView kg=tv(" kg",11,true);kg.setTextColor(accent);row.addView(kg,new LinearLayout.LayoutParams(30,48));
+            row.addView(w,new LinearLayout.LayoutParams(82,50));TextView kg=tv(" kg",11,true);kg.setTextColor(accent);row.addView(kg,new LinearLayout.LayoutParams(30,48));
         }
         CheckBox done=new CheckBox(this);done.setChecked(s.done);done.setOnCheckedChangeListener((b,c)->{if(b.isPressed()){s.done=c;store.save();if(c)startRecovery(e,s);else RecoveryNotifications.cancel(this,s.id);}});row.addView(done,new LinearLayout.LayoutParams(48,52));
         content.addView(row);
@@ -206,7 +212,7 @@ public class MainActivity extends Activity {
     }
 
     void showProgress(){
-        clear(""); TextView h=tv("Progressi",38,true);h.setPadding(4,8,4,0);content.addView(h);TextView d=tv("I tuoi allenamenti sono organizzati per giornata.\nApri una scheda per vedere gli esercizi e poi entra nel singolo esercizio per il grafico dei kg.",15,false);d.setTextColor(secondary());d.setPadding(4,8,4,14);content.addView(d);
+        clear(""); TextView h=tv("Progressi",39,true);h.setPadding(4,8,4,0);content.addView(h);TextView d=tv("I tuoi allenamenti sono organizzati per giornata.\nApri una scheda per vedere gli esercizi e poi entra nel singolo esercizio per il grafico dei kg.",15,false);d.setTextColor(secondary());d.setPadding(4,8,4,14);content.addView(d);
         boolean any=false;for(String day:DAYS){List<Exercise> es=store.forDay(day);if(es.isEmpty())continue;any=true;LinearLayout c=new LinearLayout(this);c.setOrientation(LinearLayout.VERTICAL);c.setPadding(16,15,16,15);c.setBackground(box(card(),24));TextView dn=tv(day,22,true);c.addView(dn);TextView wn=tv(workoutName(day),13,true);wn.setTextColor(accent);c.addView(wn);LinearLayout pills=new LinearLayout(this);pills.setPadding(0,10,0,10);addMetric(pills,"esercizi",String.valueOf(es.size())," ");addMetric(pills,"serie",String.valueOf(store.totalSets(es))," ");c.addView(pills,new LinearLayout.LayoutParams(-1,78));StringBuilder mus=new StringBuilder();for(Exercise e:es){if(mus.length()>0)mus.append(" • ");mus.append(e.group);}TextView mt=tv(mus.toString(),13,false);mt.setTextColor(secondary());c.addView(mt);c.setOnClickListener(v->showDayProgress(day));LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);lp.setMargins(0,7,0,7);content.addView(c,lp);}if(!any)content.addView(tv("Nessun allenamento",16,true));
     }
     void showDayProgress(String day){
@@ -214,7 +220,7 @@ public class MainActivity extends Activity {
         for(Exercise e:store.forDay(day)){LinearLayout row=new LinearLayout(this);row.setGravity(Gravity.CENTER_VERTICAL);row.setPadding(16,12,16,12);row.setBackground(box(card(),20));TextView n=tv(e.name,17,true);row.addView(n,new LinearLayout.LayoutParams(0,60,1));TextView m=tv(e.sets.size()+" serie\n"+fmt(store.maxWeight(e))+" kg",12,false);m.setTextColor(secondary());m.setGravity(Gravity.RIGHT|Gravity.CENTER_VERTICAL);row.addView(m,new LinearLayout.LayoutParams(95,60));row.setOnClickListener(v->showChart(e));LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,78);lp.setMargins(0,5,0,5);content.addView(row,lp);}
     }
     void showAdd(){
-        clear("");TextView h=tv("Aggiungi esercizio",32,true);h.setPadding(4,8,4,8);content.addView(h);
+        clear("");TextView h=tv("Aggiungi esercizio",34,true);h.setPadding(4,8,4,8);content.addView(h);
         LinearLayout dayBox=new LinearLayout(this);dayBox.setGravity(Gravity.CENTER_VERTICAL);dayBox.setPadding(16,0,16,0);dayBox.setBackground(box(card(),26));TextView dl=tv("Giorno",16,false);dl.setTextColor(secondary());dayBox.addView(dl,new LinearLayout.LayoutParams(0,54,1));Spinner day=new Spinner(this);ArrayAdapter<String>a=new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,DAYS){@Override public View getView(int p,View c,android.view.ViewGroup parent){TextView v=(TextView)super.getView(p,c,parent);v.setTextColor(accent);v.setTextSize(16);v.setGravity(Gravity.RIGHT|Gravity.CENTER_VERTICAL);return v;}};day.setAdapter(a);day.setSelection(Math.max(0,Arrays.asList(DAYS).indexOf(store.selectedDay)));dayBox.addView(day,new LinearLayout.LayoutParams(145,54));content.addView(dayBox);
         TextView sec=tv("Esercizio",17,true);sec.setPadding(4,22,4,7);content.addView(sec);LinearLayout box=new LinearLayout(this);box.setOrientation(LinearLayout.VERTICAL);box.setPadding(16,12,16,14);box.setBackground(box(card(),24));EditText name=edit("Nome");box.addView(name,new LinearLayout.LayoutParams(-1,50));EditText reps=edit("8-10");reps.setText("8-10");box.addView(reps,new LinearLayout.LayoutParams(-1,50));LinearLayout step=new LinearLayout(this);Button mi=btn("−"),pl=btn("+");TextView num=tv("Serie normali: 3",16,true);final int[] cnt={3};step.addView(num,new LinearLayout.LayoutParams(0,52,1));step.addView(mi,new LinearLayout.LayoutParams(58,52));step.addView(pl,new LinearLayout.LayoutParams(58,52));box.addView(step);content.addView(box);
         TextView sh=tv("Kg per serie normale",17,true);sh.setPadding(4,20,4,7);content.addView(sh);LinearLayout weightsBox=new LinearLayout(this);weightsBox.setOrientation(LinearLayout.VERTICAL);content.addView(weightsBox);ArrayList<EditText> weights=new ArrayList<>();Runnable rebuild=()->{weightsBox.removeAllViews();weights.clear();for(int i=0;i<cnt[0];i++){EditText w=edit("Serie "+(i+1));w.setText("20");w.setInputType(2|8192);w.setSelectAllOnFocus(true);weights.add(w);weightsBox.addView(w,new LinearLayout.LayoutParams(-1,48));}};rebuild.run();mi.setOnClickListener(v->{if(cnt[0]>1){cnt[0]--;num.setText("Serie normali: "+cnt[0]);rebuild.run();}});pl.setOnClickListener(v->{if(cnt[0]<20){cnt[0]++;num.setText("Serie normali: "+cnt[0]);rebuild.run();}});
@@ -293,7 +299,7 @@ public class MainActivity extends Activity {
     ArrayList<Double> repeat(double value,int n){ArrayList<Double>x=new ArrayList<>();for(int i=0;i<Math.max(1,n);i++)x.add(value);return x;}
 
     void showSettings(){
-        clear("");TextView h=tv("Impostazioni",38,true);h.setPadding(4,8,4,8);content.addView(h);TextView a=tv("Aspetto",17,true);a.setTextColor(secondary());a.setPadding(4,8,4,7);content.addView(a);LinearLayout card=new LinearLayout(this);card.setOrientation(LinearLayout.VERTICAL);card.setPadding(16,8,16,8);card.setBackground(box(this.card(),24));Switch theme=new Switch(this);theme.setText("Tema scuro");theme.setTextColor(fg());theme.setChecked(dark);theme.setTextSize(16);card.addView(theme,new LinearLayout.LayoutParams(-1,56));TextView ct=tv("Colore principale",16,true);ct.setPadding(0,8,0,5);card.addView(ct);String[] names={"Viola","Blu","Azzurro","Ciano","Verde","Lime","Arancione","Giallo","Rosso","Rosa"};int[] colors={Color.rgb(216,137,255),Color.rgb(70,130,255),Color.rgb(45,170,255),Color.rgb(50,210,210),Color.rgb(50,190,110),Color.rgb(150,210,70),Color.rgb(245,150,55),Color.rgb(245,200,60),Color.rgb(235,70,80),Color.rgb(245,90,160)};RadioGroup rg=new RadioGroup(this);for(int i=0;i<names.length;i++){RadioButton r=new RadioButton(this);r.setText(names[i]);r.setTextColor(fg());r.setChecked(store.accentIndex==i);final int k=i;r.setOnClickListener(v->{store.accentIndex=k;store.accent=colors[k];store.save();build();});rg.addView(r);}card.addView(rg);TextView current=tv("Tema attuale       "+(dark?"Scuro":"Chiaro"),16,false);current.setTextColor(secondary());card.addView(current,new LinearLayout.LayoutParams(-1,50));content.addView(card);theme.setOnCheckedChangeListener((b,c)->{if(b.isPressed()){store.dark=c;store.save();build();}});
+        clear("");TextView h=tv("Impostazioni",39,true);h.setPadding(4,8,4,8);content.addView(h);TextView a=tv("Aspetto",17,true);a.setTextColor(secondary());a.setPadding(4,8,4,7);content.addView(a);LinearLayout card=new LinearLayout(this);card.setOrientation(LinearLayout.VERTICAL);card.setPadding(16,8,16,8);card.setBackground(box(this.card(),24));Switch theme=new Switch(this);theme.setText("Tema scuro");theme.setTextColor(fg());theme.setChecked(dark);theme.setTextSize(16);card.addView(theme,new LinearLayout.LayoutParams(-1,56));TextView ct=tv("Colore principale",16,true);ct.setPadding(0,8,0,5);card.addView(ct);String[] names={"Viola","Blu","Azzurro","Ciano","Verde","Lime","Arancione","Giallo","Rosso","Rosa"};int[] colors={Color.rgb(216,137,255),Color.rgb(70,130,255),Color.rgb(45,170,255),Color.rgb(50,210,210),Color.rgb(50,190,110),Color.rgb(150,210,70),Color.rgb(245,150,55),Color.rgb(245,200,60),Color.rgb(235,70,80),Color.rgb(245,90,160)};RadioGroup rg=new RadioGroup(this);for(int i=0;i<names.length;i++){RadioButton r=new RadioButton(this);r.setText(names[i]);r.setTextColor(fg());r.setChecked(store.accentIndex==i);final int k=i;r.setOnClickListener(v->{store.accentIndex=k;store.accent=colors[k];store.save();build();});rg.addView(r);}card.addView(rg);TextView current=tv("Tema attuale       "+(dark?"Scuro":"Chiaro"),16,false);current.setTextColor(secondary());card.addView(current,new LinearLayout.LayoutParams(-1,50));content.addView(card);theme.setOnCheckedChangeListener((b,c)->{if(b.isPressed()){store.dark=c;store.save();build();}});
         TextView d=tv("Dati",17,true);d.setTextColor(secondary());d.setPadding(4,24,4,7);content.addView(d);LinearLayout data=new LinearLayout(this);data.setOrientation(LinearLayout.VERTICAL);data.setPadding(16,10,16,10);data.setBackground(box(this.card(),24));data.addView(tv("I dati vengono salvati localmente sul telefono.",15,false));Button notif=btn("Richiedi notifiche");notif.setTextColor(accent);notif.setOnClickListener(v->requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS},77));data.addView(notif,new LinearLayout.LayoutParams(-1,52));content.addView(data);
         TextView sw=tv("Settimana",17,true);sw.setTextColor(secondary());sw.setPadding(4,24,4,7);content.addView(sw);LinearLayout week=new LinearLayout(this);week.setOrientation(LinearLayout.VERTICAL);week.setPadding(16,4,16,4);week.setBackground(box(this.card(),24));for(String day:DAYS){TextView t=tv(day+"                              "+store.forDay(day).size()+" esercizi",16,false);t.setPadding(0,12,0,12);week.addView(t);}content.addView(week);
     }
