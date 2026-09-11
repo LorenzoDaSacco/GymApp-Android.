@@ -198,6 +198,13 @@ public class MainActivity extends Activity {
         Button back=btn("‹ Torna all'esercizio");back.setOnClickListener(v->showExercise(e,false));content.addView(back,new LinearLayout.LayoutParams(-1,54));
     }
 
+    String workoutName(String day){
+        if(day.equals("LUNEDÌ")) return "UPPER";
+        if(day.equals("MARTEDÌ")) return "LOWER";
+        if(day.equals("MERCOLEDÌ")) return "FULLBODY";
+        return "ALLENAMENTO";
+    }
+
     void showProgress(){
         clear(""); TextView h=tv("Progressi",38,true);h.setPadding(4,8,4,0);content.addView(h);TextView d=tv("I tuoi allenamenti sono organizzati per giornata.\nApri una scheda per vedere gli esercizi e poi entra nel singolo esercizio per il grafico dei kg.",15,false);d.setTextColor(secondary());d.setPadding(4,8,4,14);content.addView(d);
         boolean any=false;for(String day:DAYS){List<Exercise> es=store.forDay(day);if(es.isEmpty())continue;any=true;LinearLayout c=new LinearLayout(this);c.setOrientation(LinearLayout.VERTICAL);c.setPadding(16,15,16,15);c.setBackground(box(card(),24));TextView dn=tv(day,22,true);c.addView(dn);TextView wn=tv(workoutName(day),13,true);wn.setTextColor(accent);c.addView(wn);LinearLayout pills=new LinearLayout(this);pills.setPadding(0,10,0,10);addMetric(pills,"esercizi",String.valueOf(es.size())," ");addMetric(pills,"serie",String.valueOf(store.totalSets(es))," ");c.addView(pills,new LinearLayout.LayoutParams(-1,78));StringBuilder mus=new StringBuilder();for(Exercise e:es){if(mus.length()>0)mus.append(" • ");mus.append(e.group);}TextView mt=tv(mus.toString(),13,false);mt.setTextColor(secondary());c.addView(mt);c.setOnClickListener(v->showDayProgress(day));LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);lp.setMargins(0,7,0,7);content.addView(c,lp);}if(!any)content.addView(tv("Nessun allenamento",16,true));
