@@ -5,13 +5,15 @@ plugins {
 android {
     namespace 'com.gymtrackerpro.app'
     compileSdk 35
+
     defaultConfig {
         applicationId 'com.gymtrackerpro.app'
         minSdk 26
         targetSdk 35
         versionCode 8
-        versionName '2.6'
+        versionName '1.8'
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
