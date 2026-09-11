@@ -546,10 +546,10 @@ public class MainActivity extends Activity {
             if(x.contains("panca")||x.contains("chest"))return new String[]{"PETTO","Pettorali e tricipiti","chest"};
             if(x.contains("lat")||x.contains("row")||x.contains("rematore")||x.contains("t-bar"))return new String[]{"DORSO","Dorsali e parte alta della schiena","back"};
             if(x.contains("alzate")||x.contains("lento"))return new String[]{"SPALLE","Deltoidi","shoulders"};
+            if(x.contains("leg curl")||x.contains("stacchi")||x.contains("femorali"))return new String[]{"FEMORALI / GLUTEI","Catena posteriore","hamstrings"};
             if(x.contains("curl")||x.contains("bicip"))return new String[]{"BICIPITI","Bicipite","biceps"};
             if(x.contains("push")||x.contains("french")||x.contains("tricip"))return new String[]{"TRICIPITI","Tricipite","triceps"};
             if(x.contains("leg extension")||x.contains("press"))return new String[]{"QUADRICIPITI","Quadricipiti e glutei","quads"};
-            if(x.contains("stacchi")||x.contains("femorali")||x.contains("leg curl"))return new String[]{"FEMORALI / GLUTEI","Catena posteriore","hamstrings"};
             return new String[]{"ALTRO","Muscoli vari","full"};
         }
         int importText(String text,String day){int n=0;for(Imported it:parseImported(text)){add(it.day,it.name,it.reps,repeatWeights(it.sets),it.recovery,false);n++;}return n;}
