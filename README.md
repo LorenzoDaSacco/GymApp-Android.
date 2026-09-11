@@ -1,25 +1,28 @@
-# Gym Tracker Pro – Android
+# Gym Tracker Pro Android 1.8 — iOS Style Premium
 
-Port nativa Android della GymApp iPhone, pensata per essere costruita da Windows tramite GitHub Actions.
+Versione Android allineata allo stile iPhone di riferimento.
 
-## Funzioni incluse
-- Settimana lunedì–domenica e scheda del giorno
-- Allenamenti organizzati per giornata
-- Pesi indipendenti per ogni serie
-- Storico del peso e grafico 0–300 kg per esercizio
-- Aggiunta/rimozione serie
-- Recupero per esercizio e base per notifiche
-- Tema chiaro/scuro
-- Mappa muscolare con inquadratura per gruppo
-- Widget “Scheda di oggi” che rileva automaticamente il giorno
-- Importazione da foto con OCR ML Kit (prima versione)
+## Grafica
+- layout centrato e ordinato
+- card premium arrotondate
+- navigazione inferiore in stile iOS con selezione a pill
+- schermate Impostazioni / Progressi / Aggiungi ridisegnate
+- contenuti a larghezza controllata per evitare tagli laterali
 
-## Build
-Aprire il progetto con Android Studio oppure usare il workflow GitHub Actions `Build Gym Tracker Pro Android`.
+## Recupero
+- completando una serie parte automaticamente il recupero
+- timer visuale con conto alla rovescia e barra di avanzamento
+- allo scadere viene inviata una notifica
+- il timer continua anche se l'app va in background
+- notifiche attivabili/disattivabili dalle Impostazioni
+- accesso diretto alle impostazioni notifiche Android
 
-
-## Version 1.8 — iPhone-style UI
-- UI redesigned to closely match the provided iPhone reference screenshots.
-- Premium black cards, large typography, selected bottom-tab pill, red accent, grouped forms and progress cards.
-- Muscle map now highlights only the relevant muscle group instead of every muscle.
-- Includes the Android build fixes from 1.7.
+## Funzioni mantenute
+- schede per giorno
+- serie e kg indipendenti
+- back-off automatico -20%
+- storico e grafico dei kg
+- mappa muscolare
+- importazione foto/PDF con OCR
+- widget Scheda di oggi
+- tema scuro/chiaro e colori personalizzabili
