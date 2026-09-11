@@ -16,3 +16,6 @@ Port nativa Android della GymApp iPhone, pensata per essere costruita da Windows
 
 ## Build
 Aprire il progetto con Android Studio oppure usare il workflow GitHub Actions `Build Gym Tracker Pro Android`.
+
+
+Versione 2.6: restyling premium in stile iOS, con card, pulsanti, navigazione e spaziature rifinite.
