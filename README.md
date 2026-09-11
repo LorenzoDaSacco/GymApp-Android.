@@ -1,11 +1,10 @@
-# Gym Tracker Pro Android 1.9
+# Gym Tracker Pro Android
 
-Versione Android con grafica basata sulla GymApp Android 1.8 fornita:
-- layout iOS-style premium originale 1.8 mantenuto
-- contenuti centrati e leggibili
-- impostazioni e colori della 1.8
-- notifiche recupero abilitate/disabilitabili
-- timer recupero visuale con conto alla rovescia e barra di avanzamento
-- notifica al termine anche in background
-- back-off -20%
-- progressi, storico, OCR, widget e mappa muscolare
+Version 1.9.1 — iPhone-style premium UI with centered muscle illustrations.
+
+## Changes
+- Muscle illustrations now use a target-aware crop/zoom so the involved area is centered vertically.
+- Chest/shoulders/back/arms focus on the upper body.
+- Quadriceps/hamstrings focus on the lower body.
+- Corrected the quadriceps illustration so Leg Extension/Leg Press highlight the quadriceps instead of the calves.
+- Preserved the rest of the 1.9 premium UI, timer, notifications, widgets, OCR import, per-set weights and back-off behavior.

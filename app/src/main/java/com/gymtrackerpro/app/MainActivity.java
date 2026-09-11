@@ -583,7 +583,40 @@ public class MainActivity extends Activity {
         protected void onDraw(Canvas c){int w=getWidth(),h=getHeight(),left=55,right=w-12,top=25,bottom=h-48;p.setStyle(Paint.Style.STROKE);p.setStrokeWidth(2);p.setColor(Color.GRAY);c.drawLine(left,top,left,bottom,p);c.drawLine(left,bottom,right,bottom,p);p.setTextSize(18);p.setStyle(Paint.Style.FILL);for(int i=0;i<=6;i++){float y=bottom-(bottom-top)*i/6f;p.setColor(Color.GRAY);c.drawText(String.valueOf(i*50),8,y+6,p);p.setStrokeWidth(1);c.drawLine(left,y,right,y,p);}if(logs.isEmpty()){p.setTextSize(15);c.drawText("Nessun aggiornamento ancora",left+8,(top+bottom)/2,p);return;}long min=logs.get(0).date,max=logs.get(logs.size()-1).date;if(min==max)max=min+1;Path path=new Path();p.setColor(color);p.setStrokeWidth(5);p.setStyle(Paint.Style.STROKE);for(int i=0;i<logs.size();i++){Log l=logs.get(i);float x=left+(right-left)*(l.date-min)/(float)(max-min);float y=bottom-(bottom-top)*(float)Math.min(300,l.weight)/300f;if(i==0)path.moveTo(x,y);else path.lineTo(x,y);}c.drawPath(path,p);p.setStyle(Paint.Style.FILL);for(Log l:logs){float x=left+(right-left)*(l.date-min)/(float)(max-min);float y=bottom-(bottom-top)*(float)Math.min(300,l.weight)/300f;c.drawCircle(x,y,6,p);}}
     }
     static class MuscleMapView extends ImageView {
-        MuscleMapView(Context c,String target){super(c);setScaleType(ScaleType.CENTER_CROP);setBackground(shapeStatic(Color.rgb(232,232,234),26));int id=getResource(c,target);setImageResource(id);setPadding(0,0,0,0);}
+        private final String target;
+        MuscleMapView(Context c,String target){
+            super(c);
+            this.target=target==null?"full":target.toLowerCase(Locale.ITALIAN);
+            setScaleType(ScaleType.MATRIX);
+            setBackground(shapeStatic(Color.rgb(232,232,234),26));
+            setClipToOutline(true);
+            setImageResource(getResource(c,this.target));
+            setPadding(0,0,0,0);
+        }
+        @Override protected void onSizeChanged(int w,int h,int oldw,int oldh){super.onSizeChanged(w,h,oldw,oldh);applyFocus(w,h);}
+        private void applyFocus(int w,int h){
+            if(w<=0||h<=0||getDrawable()==null)return;
+            float iw=getDrawable().getIntrinsicWidth(), ih=getDrawable().getIntrinsicHeight();
+            if(iw<=0||ih<=0)return;
+            // Slight zoom keeps the relevant muscle area large and premium-looking.
+            float scale=Math.max((float)w/iw,(float)h/ih)*1.12f;
+            float dw=iw*scale, dh=ih*scale;
+            float tx=(w-dw)/2f;
+            // Focus is expressed as a vertical position in the original illustration.
+            float focusY=focusY(target);
+            float ty=h/2f-(ih*focusY)*scale;
+            Matrix m=new Matrix();m.setScale(scale,scale);m.postTranslate(tx,ty);setImageMatrix(m);
+        }
+        private static float focusY(String t){
+            if(t.contains("chest"))return 0.23f;
+            if(t.contains("shoulder"))return 0.22f;
+            if(t.contains("back"))return 0.28f;
+            if(t.contains("biceps"))return 0.31f;
+            if(t.contains("triceps"))return 0.31f;
+            if(t.contains("quad"))return 0.55f;
+            if(t.contains("hamstring"))return 0.55f;
+            return 0.50f;
+        }
         static int getResource(Context c,String target){String t=target==null?"full":target.toLowerCase(Locale.ITALIAN);String key="muscle_full";if(t.contains("chest"))key="muscle_chest";else if(t.contains("back"))key="muscle_back";else if(t.contains("shoulder"))key="muscle_shoulders";else if(t.contains("biceps"))key="muscle_biceps";else if(t.contains("triceps"))key="muscle_triceps";else if(t.contains("quad"))key="muscle_quads";else if(t.contains("hamstring"))key="muscle_hamstrings";return c.getResources().getIdentifier(key,"drawable",c.getPackageName());}
         static GradientDrawable shapeStatic(int color,float r){GradientDrawable g=new GradientDrawable();g.setColor(color);g.setCornerRadius(r*3);return g;}
     }
