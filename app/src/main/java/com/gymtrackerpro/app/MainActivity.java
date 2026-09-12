@@ -225,7 +225,7 @@ public class MainActivity extends Activity {
         plus.setOnClickListener(v->{store.addSet(e);showDashboard();});minus.setOnClickListener(v->{store.removeSet(e);showDashboard();});
         acts.addView(plus,new LinearLayout.LayoutParams(0,dp(46),1));acts.addView(minus,new LinearLayout.LayoutParams(0,dp(46),1));
         c.addView(acts);
-        MuscleMapView map=new MuscleMapView(this,e.target);LinearLayout.LayoutParams mp=new LinearLayout.LayoutParams(-1,dp(245));mp.setMargins(0,dp(6),0,0);c.addView(map,mp);
+        // La mappa muscolare viene mostrata solo nella schermata dettaglio: evitare una Bitmap/View pesante per ogni card.
     }
     void gapIn(LinearLayout p,int h){Space s=new Space(this);p.addView(s,new LinearLayout.LayoutParams(1,dp(h)));}
     void addSetRowTo(LinearLayout parent,Exercise e,int idx,boolean editing){
@@ -248,6 +248,11 @@ public class MainActivity extends Activity {
     }
     void commitWeight(Exercise e,int idx,EditText w){try{String raw=w.getText().toString().replace(",",".");if(raw.trim().isEmpty())return;double x=Double.parseDouble(raw);store.setWeight(e,idx,x);w.setText(fmt(x));}catch(Exception ignored){}}
 
+    void stopRecoveryForExercise(Exercise e){
+        if(timerExerciseId==e.id) stopRecovery(timerSetId);
+        for(Set set:e.sets){ RecoveryNotifications.cancel(this,set.id); RecoveryNotifications.stopVisibleTimer(this,set.id); }
+    }
+
     void showExercise(Exercise e,boolean editing){
         clearPage(e.name,false);
         TextView sub=label(e.group+"  •  "+e.focus,14,secondary(),false);content.addView(sub,new LinearLayout.LayoutParams(-1,dp(30)));
@@ -259,6 +264,15 @@ public class MainActivity extends Activity {
         if(editing){
             Switch bo=new Switch(this);bo.setText("Back-off ultima serie\n80% della serie precedente");bo.setTextColor(fg());bo.setTextSize(14);bo.setChecked(e.backOffEnabled);bo.setButtonTintList(ColorStateList.valueOf(accent));
             bo.setOnCheckedChangeListener((b,checked)->{if(b.isPressed()){store.setBackOffEnabled(e,checked);showExercise(e,true);}});content.addView(bo,new LinearLayout.LayoutParams(-1,dp(66)));
+            Button removeExercise=button("Rimuovi esercizio");
+            removeExercise.setTextColor(RED);
+            removeExercise.setOnClickListener(v->new AlertDialog.Builder(this)
+                    .setTitle("Rimuovere esercizio?")
+                    .setMessage("Vuoi eliminare \""+e.name+"\" dalla scheda di "+e.day+"?")
+                    .setNegativeButton("Annulla",null)
+                    .setPositiveButton("Rimuovi",(d,w)->{ stopRecoveryForExercise(e); store.removeExercise(e); showDashboard(); })
+                    .show());
+            LinearLayout.LayoutParams rlp=new LinearLayout.LayoutParams(-1,dp(48));rlp.setMargins(0,dp(4),0,dp(8));content.addView(removeExercise,rlp);
         }
         LinearLayout setsBox=new LinearLayout(this);setsBox.setOrientation(LinearLayout.VERTICAL);setsBox.setPadding(dp(8),dp(8),dp(8),dp(8));setsBox.setBackground(shape(card(),24));content.addView(setsBox);
         for(int i=0;i<e.sets.size();i++)addSetRowTo(setsBox,e,i,editing);
@@ -407,13 +421,15 @@ public class MainActivity extends Activity {
         try{
             String r=e.recovery==null?"":e.recovery.trim();
             int sec=parseRecovery(r);
-            if(sec<=0)return;
+            // Qualsiasi esercizio di qualsiasi giorno deve avere un recupero funzionante.
+            if(sec<=0) sec=120;
             timerExerciseId=e.id;
             timerSetId=s.id;
             timerDurationMs=sec*1000L;
             timerEndMs=System.currentTimeMillis()+timerDurationMs;
             showRecoveryTimer(e,sec);
             if(store.notificationsEnabled) RecoveryNotifications.schedule(this,e.name,s.id,sec);
+            RecoveryNotifications.startVisibleTimer(this,e.name,s.id,timerEndMs,timerDurationMs);
             timerHandler.removeCallbacksAndMessages(null);
             timerHandler.post(timerTick);
         }catch(Exception ignored){}
@@ -426,6 +442,7 @@ public class MainActivity extends Activity {
             recoveryTimerCard=null; recoveryProgress=null; recoveryCountdown=null;
         }
         RecoveryNotifications.cancel(this,setId);
+        RecoveryNotifications.stopVisibleTimer(this,setId);
     }
 
     void showRecoveryTimer(Exercise e,int sec){
@@ -534,11 +551,12 @@ public class MainActivity extends Activity {
         }
         Set copySet(Set src){Set s=new Set();s.reps=src.reps;s.weight=src.weight;s.done=false;s.isBackOff=false;return s;}
         void removeSet(Exercise e){int regular=e.backOffEnabled?e.sets.size()-1:e.sets.size();if(regular<=1)return;int idx=e.backOffEnabled?e.sets.size()-2:e.sets.size()-1;e.sets.remove(idx);refreshBackOff(e);save();}
+        void removeExercise(Exercise e){all.remove(e);save();}
         ArrayList<Log>history(Exercise e){ArrayList<Log>x=new ArrayList<>();for(Set s:e.sets)x.addAll(s.history);x.sort(Comparator.comparingLong(a->a.date));return x;}
         double maxWeight(Exercise e){double m=0;for(Set s:e.sets)m=Math.max(m,s.weight);for(Log l:history(e))m=Math.max(m,l.weight);return m;}
         void resetDay(){for(Exercise e:forDay(selectedDay))for(Set s:e.sets)s.done=false;save();}
         void add(String d,String n,String r,ArrayList<Double> ws,String rec,boolean bo){
-            if(n==null||n.isEmpty())return;String[] q=recognize(n);Exercise e=new Exercise();e.id=System.nanoTime();e.day=d;e.name=n;e.reps=r;e.recovery=rec;e.group=q[0];e.focus=q[1];e.target=q[2];
+            if(n==null||n.isEmpty())return;String[] q=recognize(n);Exercise e=new Exercise();e.id=System.nanoTime();e.day=d;e.name=n;e.reps=r;e.recovery=(rec==null||rec.trim().isEmpty())?"2:00":rec;e.group=q[0];e.focus=q[1];e.target=q[2];
             for(double w:ws){Set s=new Set();s.id=System.nanoTime()+e.sets.size();s.reps=r;s.weight=w;e.sets.add(s);}
             e.backOffEnabled=bo;if(bo){Set src=e.sets.get(e.sets.size()-1);Set s=new Set();s.id=System.nanoTime();s.reps=src.reps;s.weight=roundBackOff(src.weight);s.isBackOff=true;e.sets.add(s);}all.add(e);selectedDay=d;save();
         }

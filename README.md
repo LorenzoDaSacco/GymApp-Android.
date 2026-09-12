@@ -1,10 +1,10 @@
-# Gym Tracker Pro Android
+# GymApp Android - Timer recupero + rimozione esercizi
 
-Version 1.9.1 — iPhone-style premium UI with centered muscle illustrations.
-
-## Changes
-- Muscle illustrations now use a target-aware crop/zoom so the involved area is centered vertically.
-- Chest/shoulders/back/arms focus on the upper body.
-- Quadriceps/hamstrings focus on the lower body.
-- Corrected the quadriceps illustration so Leg Extension/Leg Press highlight the quadriceps instead of the calves.
-- Preserved the rest of the 1.9 premium UI, timer, notifications, widgets, OCR import, per-set weights and back-off behavior.
+Modifiche:
+- Timer recupero per qualsiasi serie e qualsiasi giorno: lunedì-domenica.
+- Se un esercizio non ha un recupero impostato, usa automaticamente 2:00.
+- Notifica persistente con countdown mentre il recupero è in corso, visibile anche a schermo bloccato.
+- Notifica finale quando il recupero termina.
+- Opzione "Rimuovi esercizio" in Modifica con conferma.
+- Mappa muscolare rimossa dalle card della dashboard per ridurre il lag; resta nella schermata dettaglio.
+- Il peso delle serie esistenti viene mantenuto quando si aggiunge una nuova serie.
